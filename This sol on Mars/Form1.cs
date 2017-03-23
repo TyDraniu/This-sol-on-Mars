@@ -11,10 +11,6 @@ namespace This_sol_on_Mars
 {
     public partial class Form1 : Form
     {
-
-        [DllImport("gdi32.dll")]
-        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
-
         IObservable<Report> pro1 = null;
         // IObservable<List<Report>> pro2 = null;
 
@@ -29,8 +25,8 @@ namespace This_sol_on_Mars
             SynchronizationContextScheduler UIThread = new SynchronizationContextScheduler(SynchronizationContext.Current);
             NewThreadScheduler NewThread = new NewThreadScheduler();
 
-            // Proxy.Connect();
-            mars_font = GetFontFromResource(Properties.Resources.newmars, 16.0F);
+            //// Proxy.Connect();
+            mars_font = NativeMethods.GetFontFromResource(Properties.Resources.newmars, 16.0F);
 
             pro1 = Observable
                 .FromAsync(() => Curiosity.GetLatestData())
@@ -74,23 +70,29 @@ namespace This_sol_on_Mars
             });
         }
 
-        private Font GetFontFromResource(byte[] fontData, float fontSize)
-        {
-            PrivateFontCollection fonts = new PrivateFontCollection();
-            IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
-            Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
-            uint dummy = 0;
-            fonts.AddMemoryFont(fontPtr, fontData.Length);
-            AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
-            Marshal.FreeCoTaskMem(fontPtr);
-
-            return new Font(fonts.Families[0], fontSize, FontStyle.Regular);
-        }
-
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             pro3subscripton.Dispose();
             Curiosity.Closing = true;
         }
+    }
+}
+
+internal class NativeMethods
+{
+    [DllImport("gdi32.dll")]
+    private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
+
+    protected internal static Font GetFontFromResource(byte[] fontData, float fontSize)
+    {
+        PrivateFontCollection fonts = new PrivateFontCollection();
+        IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
+        Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+        uint dummy = 0;
+        fonts.AddMemoryFont(fontPtr, fontData.Length);
+        AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
+        Marshal.FreeCoTaskMem(fontPtr);
+
+        return new Font(fonts.Families[0], fontSize, FontStyle.Regular);
     }
 }
