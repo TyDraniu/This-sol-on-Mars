@@ -15,7 +15,7 @@ namespace This_sol_on_Mars
         // IObservable<List<Report>> pro2 = null;
 
         IObservable<RootObject> pro3 = null;
-        IDisposable pro3subscripton = null;
+        IDisposable pro3subscription = null;
 
         Font mars_font;
 
@@ -63,7 +63,7 @@ namespace This_sol_on_Mars
             },
             () =>
             {
-                pro3subscripton =  pro3.Subscribe(root =>
+                pro3subscription =  pro3.Subscribe(root =>
                 {
                     root.results.ForEach(x => Console.WriteLine($"{x.sol}\t{x.terrestrial_date}\t{x.min_temp}\t{x.max_temp}\t{x.pressure}"));
                 });
@@ -72,7 +72,6 @@ namespace This_sol_on_Mars
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            pro3subscripton.Dispose();
             Curiosity.Closing = true;
         }
     }

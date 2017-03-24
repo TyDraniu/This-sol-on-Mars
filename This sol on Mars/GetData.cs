@@ -12,7 +12,13 @@ namespace This_sol_on_Mars
     {
         private const string BASE_URL = "http://marsweather.ingenology.com/v1/";
 
-        public static bool Closing = false;
+        private static bool closing = false;
+
+        public static bool Closing
+        {
+            get { return closing; }
+            set { closing = value; }
+        }
 
         public static Task<Report> GetLatestData()
         {
@@ -61,7 +67,7 @@ namespace This_sol_on_Mars
                     reports.AddRange(response.Data.results);
                     request.Parameters.Single(x => x.Name == "page").Value = ++page;   
 
-                } while (response.Data.next != null && !Closing);
+                } while (response.Data.next != null && !closing);
 
                 return reports;
            });
@@ -87,7 +93,7 @@ namespace This_sol_on_Mars
                 request.Parameters.Single(x => x.Name == "page").Value = ++page;
                 yield return reports;
 
-            } while (response.Data.next != null && !Closing);
+            } while (response.Data.next != null && !closing);
         }
 
         public static Task<List<Report>> GetArchiveDataAsync(int page = 1)

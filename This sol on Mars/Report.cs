@@ -30,5 +30,4 @@ namespace This_sol_on_Mars
         public string previous { get; set; }
         public List<Report> results { get; set; }
     }
-
 }
